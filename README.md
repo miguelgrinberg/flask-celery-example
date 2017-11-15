@@ -23,3 +23,12 @@ Quick Setup
 6. Go to `http://localhost:5000/` and enjoy this application!
 
 For details on how this all works, see my article [Using Celery with Flask](http://blog.miguelgrinberg.com/post/using-celery-with-flask).
+
+Running in Docker
+-----------
+1. Install [Docker Community Edition](https://docs.docker.com/engine/installation/)
+2. Install [Docker Compose](https://docs.docker.com/compose/install/) if it does not come with your docker installation
+3. Set two environment variables `MAIL_USERNAME` and `MAIL_PASSWORD` to a valid Gmail account credentials (these will be used to send test emails).
+4. `cd docker`
+5. `docker-compose up` will bring up 3 docker containers for redis, celery and flask.
+6. Go to `http://localhost:5000/` and enjoy this application!

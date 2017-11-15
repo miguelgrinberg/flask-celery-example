@@ -1,0 +1,39 @@
+version: '2'
+services:
+
+  flask:
+    build:
+      context: ../
+      dockerfile: docker/flask.dockerfile
+    image: flask_app
+    environment:
+      - REDIS_URL=redis://flask_celery_redis:6379/0
+      - MAIL_USERNAME=${MAIL_USERNAME}
+      - MAIL_PASSWORD=${MAIL_PASSWORD}
+    ports:
+      - "5000:5000"
+    depends_on:
+      - redis
+      - celery
+
+  redis:
+    build:
+      context: ../
+      dockerfile: docker/redis.dockerfile
+    image: redis_queue
+    container_name: flask_celery_redis
+    ports:
+      - "6379:6379"
+
+  celery:
+    build:
+      context: ../
+      dockerfile: docker/celery.dockerfile
+    image: celery_worker
+    environment:
+      - REDIS_URL=redis://flask_celery_redis:6379/0
+      - MAIL_USERNAME=${MAIL_USERNAME}
+      - MAIL_PASSWORD=${MAIL_PASSWORD}
+      - C_FORCE_ROOT=true
+    depends_on:
+      - redis
