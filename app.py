@@ -3,7 +3,7 @@ import random
 import time
 from flask import Flask, request, render_template, session, flash, redirect, \
     url_for, jsonify
-from flask.ext.mail import Mail, Message
+from flask_mail import Mail, Message
 from celery import Celery
 
 
@@ -32,8 +32,10 @@ celery.conf.update(app.config)
 
 
 @celery.task
-def send_async_email(msg):
+def send_async_email(to, subject):
     """Background task to send an email with Flask-Mail."""
+    msg = Message(subject, sender=app.config['MAIL_DEFAULT_SENDER'], recipients=[to])
+    msg.body = 'This is a test email sent from a background Celery task.'
     with app.app_context():
         mail.send(msg)
 
@@ -67,16 +69,14 @@ def index():
     session['email'] = email
 
     # send the email
-    msg = Message('Hello from Flask',
-                  recipients=[request.form['email']])
-    msg.body = 'This is a test email sent from a background Celery task.'
     if request.form['submit'] == 'Send':
         # send right away
-        send_async_email.delay(msg)
+        subject = "Hello From Flask"
+        send_async_email.delay(request.form['email'], subject)
         flash('Sending email to {0}'.format(email))
     else:
         # send in one minute
-        send_async_email.apply_async(args=[msg], countdown=60)
+        send_async_email.apply_async(args=[request.form['email'], subject], countdown=60)
         flash('An email will be sent to {0} in one minute'.format(email))
 
     return redirect(url_for('index'))
