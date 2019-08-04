@@ -32,10 +32,12 @@ celery.conf.update(app.config)
 
 
 @celery.task
-def send_async_email(msgd):
+def send_async_email(email_data):
     """Background task to send an email with Flask-Mail."""
-    msg = Message(msgd['subject'], sender=app.config['MAIL_DEFAULT_SENDER'], recipients=[msgd['to']])
-    msg.body = 'This is a test email sent from a background Celery task.'
+    msg = Message(email_data['subject'],
+                  sender=app.config['MAIL_DEFAULT_SENDER'],
+                  recipients=[email_data['to']])
+    msg.body = email_data['body']
     with app.app_context():
         mail.send(msg)
 
@@ -68,16 +70,19 @@ def index():
     email = request.form['email']
     session['email'] = email
 
-    subject = "Hello From Flask"
-    msgd = {'to': request.form['email'], 'subject': subject}
     # send the email
+    email_data = {
+        'subject': 'Hello from Flask',
+        'to': email,
+        'body': 'This is a test email sent from a background Celery task.'
+    }
     if request.form['submit'] == 'Send':
         # send right away
-        send_async_email.delay(msgd)
+        send_async_email.delay(email_data)
         flash('Sending email to {0}'.format(email))
     else:
         # send in one minute
-        send_async_email.apply_async(args=[msgd], countdown=60)
+        send_async_email.apply_async(args=[email_data], countdown=60)
         flash('An email will be sent to {0} in one minute'.format(email))
 
     return redirect(url_for('index'))
