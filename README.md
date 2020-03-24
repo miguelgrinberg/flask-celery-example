@@ -15,6 +15,14 @@ Here is a screenshot of this application:
 Quick Setup
 -----------
 
+First Choice (recommended)
+1. Clone this repository.
+2. Make sure have docker installed.
+3. `docker-compose up --build`
+4. Go to `http://localhost:5000/` and enjoy this application!
+
+Second Choice
+
 1. Clone this repository.
 2. Create a virtualenv and install the requirements.
 3. Open a second terminal window and start a local Redis server (if you are on Linux or Mac, execute `run-redis.sh` to install and launch a private copy).

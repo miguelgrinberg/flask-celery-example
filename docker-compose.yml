@@ -1,0 +1,37 @@
+version: '3'
+
+services:
+  redis:
+    image: 'redis:3.0-alpine'
+    command: redis-server
+#    --requirepass something
+    volumes:
+      - 'redis:/var/lib/redis/data'
+    ports:
+      - '6379:6379'
+
+  website:
+
+
+    build: .
+    command: >
+      gunicorn -b 0.0.0.0:8000
+        --access-logfile - app:app
+    volumes:
+      - '.:/testing'
+    ports:
+      - '8000:8000'
+
+  celery:
+    build: .
+    command: celery worker -l info -A app.celery
+#    environment:
+#      - AM_I_IN_A_DOCKER_CONTAINER=YES
+
+    env_file:
+      - 'MAIL_ACCOUNT.env'
+    volumes:
+      - '.:/testing'
+
+volumes:
+  redis:
