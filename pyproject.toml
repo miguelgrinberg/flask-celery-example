@@ -1,0 +1,31 @@
+[tool.poetry]
+name = "flask-celery-example"
+version = "0.1.0"
+description = ""
+authors = ["Your Name <you@example.com>"]
+readme = "README.md"
+packages = [{include = "flask_celery_example"}]
+
+[tool.poetry.dependencies]
+python = "^3.9"
+amqp = "2.5.2"
+billiard = "3.6.3.0"
+blinker = "1.4"
+celery = "4.4.1"
+click = "7.0"
+Flask = "1.1.1"
+Flask-Mail = "0.9.1"
+itsdangerous = "1.1.0"
+Jinja2 = "2.10.1"
+kombu = "4.6.8"
+MarkupSafe = "1.1.1"
+pytz = "2019.1"
+redis = "3.4.1"
+vine = "1.3.0"
+Werkzeug = "1.0.0"
+taskipy = "^1.10.3"
+
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
